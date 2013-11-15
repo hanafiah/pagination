@@ -43,7 +43,7 @@
             }
         };
         var settings = $.extend({}, defaults, options);
-        cache.offset = settings.iCurrentPage;
+        cache.offset = (settings.iCurrentPage - 1) * settings.itemsOnPage;
         cache.limit = settings.itemsOnPage * (settings.pageLength * 3);
 
 
@@ -57,8 +57,8 @@
             });
             $.getJSON(settings.ajaxSource, postData, function(d) {
                 cache.json = jQuery.extend(true, {}, d);
-                cache.iLower = cache.json.start - 1;
-                cache.iUpper = cache.json.start + cache.json.limit - 1;
+                cache.iLower = cache.json.start;
+                cache.iUpper = cache.json.start + cache.json.limit;
             });
         };
 
@@ -76,8 +76,8 @@
             if (cache.iLower < 0 || iOffset < cache.iLower || (iOffset + iLimit) > cache.iUpper)
             {
                 cache.offset = iOffset - Math.floor(settings.pageLength * settings.itemsOnPage);
-                if (cache.offset < 1) {
-                    cache.offset = 1;
+                if (cache.offset < 0) {
+                    cache.offset = 0;
                 }
                 fnGetData();
             }

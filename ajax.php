@@ -22,7 +22,7 @@ $limit = $_GET['limit'];
 
 //cache data
 //we only return some range of data
-$data['data'] = array_slice($table, $start - 1, $limit);
+$data['data'] = array_slice($table, $start , $limit);
 
 $data['total'] = count($table);
 $data['start'] = (int) $start;
