@@ -81,8 +81,10 @@
                 }
                 fnGetData();
             }
-            if (Object.keys(cache.json.data).length > 0) {
-                data = cache.json.data.slice(iOffset - cache.iLower, iLimit + iOffset - cache.iLower);
+            if (typeof cache.json.data != "undefined") {
+                if (Object.keys(cache.json.data).length > 0) {
+                    data = cache.json.data.slice(iOffset - cache.iLower, iLimit + iOffset - cache.iLower);
+                }
             }
             if (typeof settings.callback == 'function') { // make sure the callback is a function
                 settings.callback(data); // brings the scope to the callback
