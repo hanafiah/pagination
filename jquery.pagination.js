@@ -1,6 +1,6 @@
 /**
  File:        jquery.pagination.js
- Version:     1.0.0
+ Version:     1.0.1
  Author:      Muhamad Hanafiah Yahya @ ibnuyahya ( hanafiahyahya.blogspot.com )
  source:      https://github.com/hanafiah/pagination
 
@@ -30,7 +30,9 @@
     $.fn.pagination = function(options) {
         var base = this;
         var cache = {
-            json: {}
+            json: {},
+            iLower: 0,
+            iUpper: 0
         };
         var data = {};
         var postData = '';
@@ -52,14 +54,27 @@
                 offset: cache.offset,
                 limit: cache.limit
             };
-            $.ajaxSetup({
+//            $.ajaxSetup({
+//                async: false
+//            });
+
+            $.ajax({
+                type: "POST",
+                url: settings.ajaxSource,
+                data: postData,
+                success: function(d) {
+                    cache.json = jQuery.extend(true, {}, d);
+                    cache.iLower = cache.json.start;
+                    cache.iUpper = cache.json.start + cache.json.limit;
+                },
+                dataType: 'json',
                 async: false
             });
-            $.getJSON(settings.ajaxSource, postData, function(d) {
-                cache.json = jQuery.extend(true, {}, d);
-                cache.iLower = cache.json.start;
-                cache.iUpper = cache.json.start + cache.json.limit;
-            });
+//            $.getJSON(settings.ajaxSource, postData, function(d) {
+//                cache.json = jQuery.extend(true, {}, d);
+//                cache.iLower = cache.json.start;
+//                cache.iUpper = cache.json.start + cache.json.limit;
+//            });
         };
 
         var fnDraw = function(iPage) {
@@ -92,43 +107,47 @@
         };
 
         var fnRenderPaging = function() {
-            settings.iTotalPages = Math.ceil(cache.json.total / settings.itemsOnPage);
-            var iHalf = Math.floor(settings.pageLength / 2);
-            if (settings.iTotalPages < settings.pageLength) {
-                iStart = 1;
-                iEnd = settings.iTotalPages;
-            } else if (settings.iCurrentPage <= iHalf) {
-                iStart = 1;
-                iEnd = settings.pageLength;
-            } else if (settings.iCurrentPage >= (settings.iTotalPages - iHalf)) {
-                iStart = settings.iTotalPages - settings.pageLength + 1;
-                iEnd = settings.iTotalPages;
-            } else {
-                iStart = settings.iCurrentPage - iHalf;
-                iEnd = iStart + settings.pageLength - 1;
-            }
+            if (typeof cache.json.total != 'undefined') {
+                settings.iTotalPages = Math.ceil(cache.json.total / settings.itemsOnPage);
+                var iHalf = Math.floor(settings.pageLength / 2);
+                if (settings.iTotalPages < settings.pageLength) {
+                    iStart = 1;
+                    iEnd = settings.iTotalPages;
+                } else if (settings.iCurrentPage <= iHalf) {
+                    iStart = 1;
+                    iEnd = settings.pageLength;
+                } else if (settings.iCurrentPage >= (settings.iTotalPages - iHalf)) {
+                    iStart = settings.iTotalPages - settings.pageLength + 1;
+                    iEnd = settings.iTotalPages;
+                } else {
+                    iStart = settings.iCurrentPage - iHalf;
+                    iEnd = iStart + settings.pageLength - 1;
+                }
 
-            $('li:gt(0)', base).filter(':not(.next,.last)').remove();
-            for (j = iStart; j <= iEnd; j++) {
-                sClass = (j == settings.iCurrentPage) ? 'class="active"' : '';
-                $('<li ' + sClass + '><a href="#">' + j + '</a></li>')
-                        .insertBefore($('.next,.last', base)[0])
-                        .bind('click', function(e) {
-                            e.preventDefault();
-                            fnDraw($('a', this).text());
-                        });
-            }
+                $('li:gt(0)', base).filter(':not(.next,.last)').remove();
+                for (j = iStart; j <= iEnd; j++) {
+                    sClass = (j == settings.iCurrentPage) ? 'class="active"' : '';
+                    $('<li ' + sClass + '><a href="#' + j + '">' + j + '</a></li>')
+                            .insertBefore($('.next,.last', base)[0])
+                            .bind('click', function(e) {
+                                e.preventDefault();
+                                fnDraw($('a', this).attr('href').slice(1));
+                            });
+                }
 
-            if (settings.iCurrentPage === 1) {
-                $('.first', base).addClass('disabled');
-            } else {
-                $('.first', base).removeClass('disabled');
-            }
+                if (settings.iCurrentPage === 1) {
+                    $('.first', base).addClass('disabled');
+                } else {
+                    $('.first', base).removeClass('disabled');
+                }
 
-            if (settings.iCurrentPage === settings.iTotalPages || settings.iTotalPages === 0) {
-                $('.last', base).addClass('disabled');
+                if (settings.iCurrentPage === settings.iTotalPages || settings.iTotalPages === 0) {
+                    $('.last', base).addClass('disabled');
+                } else {
+                    $('.last', base).removeClass('disabled');
+                }
             } else {
-                $('.last', base).removeClass('disabled');
+                $('<li ><a href="#">Ajax Failed</a></li>').insertBefore($('.next,.last', base)[0]);
             }
 
         };
