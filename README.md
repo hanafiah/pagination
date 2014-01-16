@@ -4,4 +4,5 @@ pagination
 simple pagination
 
 live demo
-http://sandbox.ibnuyahya.com/pagination/example.html
+
+<a href="http://sandbox.ibnuyahya.com/pagination/example.html" target="_blank">http://sandbox.ibnuyahya.com/pagination/example.html</a>
