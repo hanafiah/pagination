@@ -17,8 +17,8 @@ for ($x = 1; $x <= 500; $x++) {
     );
 }
 
-$start = $_GET['offset'];
-$limit = $_GET['limit'];
+$start = $_POST['offset'];
+$limit = $_POST['limit'];
 
 //cache data
 //we only return some range of data

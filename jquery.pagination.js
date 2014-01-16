@@ -54,9 +54,6 @@
                 offset: cache.offset,
                 limit: cache.limit
             };
-//            $.ajaxSetup({
-//                async: false
-//            });
 
             $.ajax({
                 type: "POST",
@@ -70,11 +67,7 @@
                 dataType: 'json',
                 async: false
             });
-//            $.getJSON(settings.ajaxSource, postData, function(d) {
-//                cache.json = jQuery.extend(true, {}, d);
-//                cache.iLower = cache.json.start;
-//                cache.iUpper = cache.json.start + cache.json.limit;
-//            });
+
         };
 
         var fnDraw = function(iPage) {
