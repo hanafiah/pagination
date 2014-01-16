@@ -1,7 +1,7 @@
 pagination
 ==========
 
-simple pagination
+simple twitter bootstrap jquery pagination plugin
 
 Usage
 ---
